@@ -1,0 +1,4 @@
+canvas#polygons-canvas {
+  background-color: red;
+  position: fixed;
+}
