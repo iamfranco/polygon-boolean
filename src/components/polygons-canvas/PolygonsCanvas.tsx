@@ -1,10 +1,6 @@
 import { useEffect, useState } from 'react';
 import './PolygonsCanvas.css';
-
-interface WindowSize {
-  width: number,
-  height: number
-}
+import { WindowSize } from './models/WindowSize';
 
 const PolygonsCanvas = () => {
   const canvasSize = useWindowSize();

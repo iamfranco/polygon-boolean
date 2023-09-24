@@ -1,5 +1,6 @@
 import { act, render } from "@testing-library/react";
 import PolygonsCanvas from "./PolygonsCanvas";
+import { randomWindowSize } from "./models/WindowSize";
 
 describe('PolygonsCanvas Component', () => {
   let canvas: HTMLCanvasElement | null = null;
@@ -8,29 +9,28 @@ describe('PolygonsCanvas Component', () => {
     canvas = document.querySelector<HTMLCanvasElement>('#polygons-canvas');
   });
 
-  test('canvas should exist', () => {
+  it('canvas should exist', () => {
     expect(canvas).not.toBeNull();
   })
 
-  test('canvas initial size should match window size', () => {
+  it('canvas initial size should match window size', () => {
     if (canvas == null) return;
     expect(canvas.width).toBe(window.innerWidth);
     expect(canvas.height).toBe(window.innerHeight);
   })
   
-  test('when window resizes, canvas resize to match new window size', () => {
+  it('when window resizes, canvas resize to match new window size', () => {
     if (canvas == null) return;
 
-    const newWindowWidth = 350;
-    const newWindowHeight = 450;
+    const windowSize = randomWindowSize();
     act(() => {
-      window.innerWidth = newWindowWidth;
-      window.innerHeight = newWindowHeight;
+      window.innerWidth = windowSize.width;
+      window.innerHeight = windowSize.height;
       window.dispatchEvent(new Event('resize'));
     });
     
-    expect(canvas.width).toBe(newWindowWidth);
-    expect(canvas.height).toBe(newWindowHeight);
+    expect(canvas.width).toBe(windowSize.width);
+    expect(canvas.height).toBe(windowSize.height);
   })
     
 });
