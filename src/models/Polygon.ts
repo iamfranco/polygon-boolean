@@ -4,8 +4,29 @@ export const Polygon = (ctx: CanvasRenderingContext2D, color: string = '#000', l
   points: [] as Point[],
   color: color,
   lineWidth: lineWidth,
+  lastSelectedIndex: -1,
 
-  addPoint(p: Point) { this.points.push({x: p.x, y: p.y}) },
+  findPointIndex(p: Point) {
+    return this.points.findIndex(q => p.x == q.x && p.y == q.y);
+  },
+
+  addPoint(p: Point) {
+    if (this.lastSelectedIndex == -1) {
+      this.points.push({x: p.x, y: p.y})
+      this.lastSelectedIndex = 0;
+      return; 
+    }
+
+    this.points.splice(this.lastSelectedIndex, 0, {x: p.x, y: p.y});
+    this.lastSelectedIndex++;
+  },
+
+  removePoint(p: Point) {
+    const matchingPointIndex = this.findPointIndex(p);
+    if (matchingPointIndex == -1) return;
+
+    this.points.splice(matchingPointIndex, 1);;
+  },
   
   draw() {
     const dotSize = 4;

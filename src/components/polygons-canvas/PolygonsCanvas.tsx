@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import './PolygonsCanvas.css';
 import { WindowSize } from './models/WindowSize';
 import { Polygon } from '../../models/Polygon';
-import { Mouse, pointToMouse } from '../../models/Mouse';
+import { pointToMouse } from '../../models/Mouse';
 const PolygonsCanvas = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   let canvas: HTMLCanvasElement;
@@ -50,13 +50,18 @@ function useWindowSize(): WindowSize  {
 function drawDraggablePolygon(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D) {
   let mouse = pointToMouse({x: 0, y: 0});
 
-  canvas.addEventListener('mousedown', () => {
-    mouse.isClicked = true;
+  canvas.addEventListener('mousedown', (e) => {
+    if (e.button == 0) {
+      mouse.isLeftClicked = true;
+    } else {
+      mouse.isRightClicked = true;
+    }
     mouse.hasMouseChanged = true;
   });
 
   canvas.addEventListener('mouseup', () => {
-    mouse.isClicked = false;
+    mouse.isLeftClicked = false;
+    mouse.isRightClicked = false;
     mouse.hasMouseChanged = true;
   });
 
@@ -77,21 +82,25 @@ function drawDraggablePolygon(canvas: HTMLCanvasElement, ctx: CanvasRenderingCon
       mouse.activePoint = polygon.getMouseoverPoint(mouse);
     }
 
-    if (mouse.activePoint == null && mouse.isClicked) {
+    if (mouse.activePoint == null && mouse.isLeftClicked) {
       polygon.addPoint({x: mouse.x, y: mouse.y});
-      mouse.isClicked = false;
+      mouse.isLeftClicked = false;
     }
 
     if (mouse.activePoint !== null) {
-      if (mouse.isClicked) {
+      if (mouse.isLeftClicked) {
         if (mouse.isDraggingAPoint) {
           mouse.activePoint.x = mouse.x;
           mouse.activePoint.y = mouse.y;
         } else {
           mouse.isDraggingAPoint = true
+          polygon.lastSelectedIndex = polygon.findPointIndex({x: mouse.activePoint.x, y: mouse.activePoint.y})+1;
         }
+      } else if (mouse.isRightClicked) {
+        polygon.removePoint(mouse.activePoint);
+        mouse.activePoint = null;
       } else {
-        mouse.isDraggingAPoint = false
+        mouse.isDraggingAPoint = false;
       }
     }
 
