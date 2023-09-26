@@ -106,9 +106,11 @@ export function drawDraggablePolygon(canvas: HTMLCanvasElement, ctx: CanvasRende
       polygonMovements = polygons.map(poly => poly.points.map(() => ({ x: 0, y: 0 })));
       for (let i = 0; i < polygonMovements.length; i++) {
         const polygon = polygonMovements[i];
+        const bigMovementX = Random.float(-50, 50) / polygonSwitchFrame;
+        const bigMovementY = Random.float(-50, 50) / polygonSwitchFrame;
         for (let j = 0; j < polygon.length; j++) {
-          polygonMovements[i][j].x = Random.float(-100, 100) / polygonSwitchFrame;
-          polygonMovements[i][j].y = Random.float(-100, 100) / polygonSwitchFrame;
+          polygonMovements[i][j].x = bigMovementX + Random.float(-50, 50) / polygonSwitchFrame;
+          polygonMovements[i][j].y = bigMovementY + Random.float(-50, 50) / polygonSwitchFrame;
         }
       }
     } else {

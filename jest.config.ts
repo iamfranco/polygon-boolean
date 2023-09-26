@@ -7,5 +7,10 @@ export default {
   },
   moduleNameMapper: {
     '\\.(gif|ttf|eot|svg|png|css)$': '<rootDir>/src/test/__ mocks __/fileMock.js'
+  },
+  globals: {
+    'ts-jest': {
+      diagnostics: false
+    }
   }
 }
