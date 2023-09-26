@@ -6,12 +6,12 @@
   pointer-events: none;
   color: #333;
   font-size: 20px;
+  color: white;
 }
 
 #instruction .key {
   font-weight: bold;
   padding: 5px 10px;
-  background-color: #555;
-  color: white;
+  background-color: rgba(102, 102, 102, 0.5);
   text-transform: uppercase;
 }

@@ -40,7 +40,7 @@ export function drawDraggablePolygon(canvas: HTMLCanvasElement, ctx: CanvasRende
   const polygons = [Polygon(ctx), Polygon(ctx)];
   const xMid = canvasSize.width / 2;
   const yMid = canvasSize.height / 2;
-  const polygonScale = 100;
+  const polygonScale = 150;
   const root3 = Math.sqrt(3);
   polygons[0].addPoint({x: xMid, y: yMid - root3 * polygonScale});
   polygons[0].addPoint({x: xMid - polygonScale, y: yMid});
@@ -85,13 +85,14 @@ export function drawDraggablePolygon(canvas: HTMLCanvasElement, ctx: CanvasRende
     for (let i=0; i<polygons.length; i++) {
       const polygon = polygons[i];
       const isSelectedPolygon = i == selectedPolygonId;
-      const color = isSelectedPolygon ? 'blue' : 'black';
+      const color = isSelectedPolygon ? '#FFB000' : '#7D7C7C';
       const lineWidth = isSelectedPolygon ? 2 : 1;
-      polygon.draw(color, lineWidth);
+      const dotSize = isSelectedPolygon ? 4 : 3;
+      polygon.draw(color, lineWidth, dotSize);
     }
 
     if (mouse.activePoint !== null) {
-      ctx.strokeStyle = "red";
+      ctx.strokeStyle = "white";
       ctx.lineWidth = 2;
       const pos = mouse.activePoint;
       ctx.beginPath();

@@ -26,13 +26,13 @@ export const Polygon = (ctx: CanvasRenderingContext2D) => ({
     this.points.splice(matchingPointIndex, 1);;
   },
   
-  draw(color: string = 'red', lineWidth: number = 1) {
-    const dotSize = 4;
+  draw(color: string, lineWidth: number, dotSize: number) {
     const path2D = new Path2D();
     for (const p of this.points) {
       path2D.lineTo(p.x, p.y);
     }
     path2D.closePath();
+
     for (const p of this.points) {
       path2D.moveTo(p.x + dotSize, p.y);
       path2D.arc(p.x, p.y, dotSize, 0, Math.PI * 2);
