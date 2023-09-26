@@ -1,6 +1,7 @@
 import { pointToMouse } from "../../../models/Mouse";
 import { Point } from "../../../models/Point";
 import { Polygon } from "../../../models/Polygon";
+import { getPolygonsIntersection } from "../../../scripts/intersectionUtils/IntersectionUtils";
 import Random from "../../../scripts/random/Random";
 import { WindowSize } from "../models/WindowSize";
 
@@ -49,6 +50,8 @@ export function drawDraggablePolygon(canvas: HTMLCanvasElement, ctx: CanvasRende
   polygons[1].addPoint({x: xMid, y: yMid - root3 * polygonScale / 2});
   polygons[1].addPoint({x: xMid - polygonScale, y: yMid + root3 * polygonScale / 2});
   polygons[1].addPoint({x: xMid + polygonScale, y: yMid + root3 * polygonScale / 2});
+
+  let intersectionalPolygons = getPolygonsIntersection(polygons[0].points, polygons[1].points);
   let selectedPolygonId = 0;
 
   function drawFrame() {
@@ -89,6 +92,22 @@ export function drawDraggablePolygon(canvas: HTMLCanvasElement, ctx: CanvasRende
       const lineWidth = isSelectedPolygon ? 2 : 1;
       const dotSize = isSelectedPolygon ? 4 : 3;
       polygon.draw(color, lineWidth, dotSize);
+    }
+
+    intersectionalPolygons = getPolygonsIntersection(polygons[0].points, polygons[1].points);
+    for (let i=0; i<intersectionalPolygons.length; i++) {
+      const points = intersectionalPolygons[i];
+      const path2D = new Path2D();
+      for (const p of points) {
+        path2D.lineTo(p.x, p.y);
+      }
+      path2D.closePath();
+      
+      ctx.strokeStyle = '#C71839';
+      ctx.fillStyle = '#C7183929';
+      ctx.lineWidth = 3;
+      ctx.stroke(path2D); 
+      ctx.fill(path2D);
     }
 
     if (mouse.activePoint !== null) {
