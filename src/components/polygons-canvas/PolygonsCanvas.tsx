@@ -1,23 +1,20 @@
 import { useEffect, useRef, useState } from 'react';
 import './PolygonsCanvas.css';
 import { WindowSize } from './models/WindowSize';
-import { Polygon } from '../../models/Polygon';
-import { pointToMouse } from '../../models/Mouse';
+import { drawDraggablePolygon } from './scripts/draggablePolygon';
 const PolygonsCanvas = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   let canvas: HTMLCanvasElement;
   let ctx: CanvasRenderingContext2D;
+  const canvasSize = useWindowSize();
 
   useEffect(() => {
     canvas = canvasRef.current!;
     ctx = canvas.getContext('2d')!;
 
-    drawDraggablePolygon(canvas, ctx);
+    drawDraggablePolygon(canvas, ctx, canvasSize);
     
-  }, []);
-
-  const canvasSize = useWindowSize();
-
+  }, [canvasSize]);
   return (
     <canvas ref={canvasRef} 
       id='polygons-canvas' 
@@ -45,83 +42,4 @@ function useWindowSize(): WindowSize  {
   }, []);
 
   return windowSize;
-}
-
-function drawDraggablePolygon(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D) {
-  let mouse = pointToMouse({x: 0, y: 0});
-
-  canvas.addEventListener('mousedown', (e) => {
-    if (e.button == 0) {
-      mouse.isLeftClicked = true;
-    } else {
-      mouse.isRightClicked = true;
-    }
-    mouse.hasMouseChanged = true;
-  });
-
-  canvas.addEventListener('mouseup', () => {
-    mouse.isLeftClicked = false;
-    mouse.isRightClicked = false;
-    mouse.hasMouseChanged = true;
-  });
-
-  canvas.addEventListener('mousemove', (e) => {
-    const bounds = canvas.getBoundingClientRect();
-    mouse.x = e.pageX - bounds.left - scrollX;
-    mouse.y = e.pageY - bounds.top - scrollY;
-    mouse.hasMouseChanged = true;
-  });
-
-  const polygon = Polygon(ctx);
-
-  function drawFrame() {
-    ctx.strokeStyle = "#000";
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    if (!mouse.isDraggingAPoint) {
-      mouse.activePoint = polygon.getMouseoverPoint(mouse);
-    }
-
-    if (mouse.activePoint == null && mouse.isLeftClicked) {
-      polygon.addPoint({x: mouse.x, y: mouse.y});
-      mouse.isLeftClicked = false;
-    }
-
-    if (mouse.activePoint !== null) {
-      if (mouse.isLeftClicked) {
-        if (mouse.isDraggingAPoint) {
-          mouse.activePoint.x = mouse.x;
-          mouse.activePoint.y = mouse.y;
-        } else {
-          mouse.isDraggingAPoint = true
-          polygon.lastSelectedIndex = polygon.findPointIndex({x: mouse.activePoint.x, y: mouse.activePoint.y})+1;
-        }
-      } else if (mouse.isRightClicked) {
-        polygon.removePoint(mouse.activePoint);
-        mouse.activePoint = null;
-      } else {
-        mouse.isDraggingAPoint = false;
-      }
-    }
-
-    polygon.draw();
-
-    if (mouse.activePoint !== null) {
-      ctx.strokeStyle = "red";
-      const pos = mouse.activePoint;
-      ctx.beginPath();
-      ctx.arc(pos.x,pos.y,8,0,Math.PI *2);
-      ctx.stroke();
-    }
-  }
-
-  function update() {
-    if (mouse.hasMouseChanged) {
-      mouse.hasMouseChanged = false;
-      drawFrame();
-    }
-    requestAnimationFrame(update);
-  }
-
-  requestAnimationFrame(update);
 }

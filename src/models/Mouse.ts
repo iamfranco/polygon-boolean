@@ -7,7 +7,6 @@ export interface Mouse {
   isRightClicked: boolean;
   isDraggingAPoint: boolean;
   activePoint: Point | null;
-  hasMouseChanged: boolean;
 }
 
 export const pointToMouse = (point: Point): Mouse => ({
@@ -16,6 +15,5 @@ export const pointToMouse = (point: Point): Mouse => ({
   isLeftClicked: false,
   isRightClicked: false,
   isDraggingAPoint: false,
-  activePoint: null,
-  hasMouseChanged: false
+  activePoint: null
 })

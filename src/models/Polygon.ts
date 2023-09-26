@@ -1,9 +1,7 @@
 import { Point, randomPoint } from "./Point";
 
-export const Polygon = (ctx: CanvasRenderingContext2D, color: string = '#000', lineWidth: number = 1) => ({
+export const Polygon = (ctx: CanvasRenderingContext2D) => ({
   points: [] as Point[],
-  color: color,
-  lineWidth: lineWidth,
   lastSelectedIndex: -1,
 
   findPointIndex(p: Point) {
@@ -28,7 +26,7 @@ export const Polygon = (ctx: CanvasRenderingContext2D, color: string = '#000', l
     this.points.splice(matchingPointIndex, 1);;
   },
   
-  draw() {
+  draw(color: string = 'red', lineWidth: number = 1) {
     const dotSize = 4;
     const path2D = new Path2D();
     for (const p of this.points) {
@@ -40,7 +38,7 @@ export const Polygon = (ctx: CanvasRenderingContext2D, color: string = '#000', l
       path2D.arc(p.x, p.y, dotSize, 0, Math.PI * 2);
     }
 
-    ctx.fillStyle = color;
+    ctx.strokeStyle = color;
     ctx.lineWidth = lineWidth;
     ctx.stroke(path2D);
   },
