@@ -5,7 +5,13 @@ import { getPolygonsIntersection } from "../../../scripts/intersectionUtils/Inte
 import Random from "../../../scripts/random/Random";
 import { WindowSize } from "../models/WindowSize";
 
-export function drawDraggablePolygon(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D, canvasSize: WindowSize) {
+export function drawDraggablePolygon(
+    canvas: HTMLCanvasElement, 
+    ctx: CanvasRenderingContext2D, 
+    canvasSize: WindowSize,
+    setPolygonsCount: React.Dispatch<React.SetStateAction<number>>,
+    setSelectedPolygonId: React.Dispatch<React.SetStateAction<number>>
+  ) {
   let mouse = pointToMouse({x: 0, y: 0});
   let playRandomMovement = true;
 
@@ -34,13 +40,17 @@ export function drawDraggablePolygon(canvas: HTMLCanvasElement, ctx: CanvasRende
     }
     if (e.code == 'ArrowUp') {
       selectedPolygonId = (selectedPolygonId - 1 + polygons.length) % polygons.length;
+      setSelectedPolygonId(selectedPolygonId);
     }
     if (e.code == 'ArrowDown') {
       selectedPolygonId = (selectedPolygonId + 1) % polygons.length;
+      setSelectedPolygonId(selectedPolygonId);
     }
     if (e.code == 'KeyA') {
       polygons.push(Polygon(ctx));
+      setPolygonsCount(polygons.length);
       selectedPolygonId = polygons.length - 1;
+      setSelectedPolygonId(selectedPolygonId);
     }
     if (e.code == 'KeyI') {
       if (intersectionalPolygons.length == 0) return;
@@ -58,10 +68,13 @@ export function drawDraggablePolygon(canvas: HTMLCanvasElement, ctx: CanvasRende
       }
       intersectionalPolygons = [];
       selectedPolygonId = 0;
+      setPolygonsCount(polygons.length);
+      setSelectedPolygonId(selectedPolygonId);
     }
   })
 
   let polygons = [Polygon(ctx), Polygon(ctx)];
+  setPolygonsCount(2);
   const xMid = canvasSize.width / 2;
   const yMid = canvasSize.height / 2;
   const polygonScale = 100;

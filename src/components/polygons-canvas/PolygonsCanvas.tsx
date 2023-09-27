@@ -2,7 +2,13 @@ import { useEffect, useRef, useState } from 'react';
 import './PolygonsCanvas.css';
 import { WindowSize } from './models/WindowSize';
 import { drawDraggablePolygon } from './scripts/draggablePolygon';
-const PolygonsCanvas = () => {
+
+interface Props {
+  setPolygonsCount: React.Dispatch<React.SetStateAction<number>>,
+  setSelectedPolygonId: React.Dispatch<React.SetStateAction<number>>
+}
+
+const PolygonsCanvas = ({setPolygonsCount, setSelectedPolygonId} : Props) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   let canvas: HTMLCanvasElement;
   let ctx: CanvasRenderingContext2D;
@@ -12,7 +18,7 @@ const PolygonsCanvas = () => {
     canvas = canvasRef.current!;
     ctx = canvas.getContext('2d')!;
 
-    drawDraggablePolygon(canvas, ctx, canvasSize);
+    drawDraggablePolygon(canvas, ctx, canvasSize, setPolygonsCount, setSelectedPolygonId);
     
   }, [canvasSize]);
   return (
