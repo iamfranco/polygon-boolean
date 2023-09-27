@@ -15,3 +15,12 @@
   background-color: rgba(102, 102, 102, 0.5);
   text-transform: uppercase;
 }
+
+#instruction span {
+  transition: 0.05s ease;
+}
+
+#instruction span.active {
+  background-color: #FFBB5C;
+  color: #000;
+}

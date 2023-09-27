@@ -43,13 +43,13 @@ export function drawDraggablePolygon(canvas: HTMLCanvasElement, ctx: CanvasRende
   const yMid = canvasSize.height / 2;
   const polygonScale = 150;
   const root3 = Math.sqrt(3);
-  polygons[0].addPoint({x: xMid, y: yMid - root3 * polygonScale});
-  polygons[0].addPoint({x: xMid - polygonScale, y: yMid});
-  polygons[0].addPoint({x: xMid + polygonScale, y: yMid});
+  polygons[0].addPoint({x: xMid + 50, y: yMid - root3 * polygonScale - 30});
+  polygons[0].addPoint({x: xMid - polygonScale + 50, y: yMid + 50});
+  polygons[0].addPoint({x: xMid + polygonScale + 50, y: yMid - 50});
 
-  polygons[1].addPoint({x: xMid, y: yMid - root3 * polygonScale / 2});
-  polygons[1].addPoint({x: xMid - polygonScale, y: yMid + root3 * polygonScale / 2});
-  polygons[1].addPoint({x: xMid + polygonScale, y: yMid + root3 * polygonScale / 2});
+  polygons[1].addPoint({x: xMid - polygonScale, y: yMid - root3 * polygonScale});
+  polygons[1].addPoint({x: xMid, y: yMid});
+  polygons[1].addPoint({x: xMid + polygonScale, y: yMid - root3 * polygonScale});
 
   let intersectionalPolygons = getPolygonsIntersection(polygons[0].points, polygons[1].points);
   let selectedPolygonId = 0;
