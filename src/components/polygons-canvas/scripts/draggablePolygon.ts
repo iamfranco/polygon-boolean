@@ -32,16 +32,39 @@ export function drawDraggablePolygon(canvas: HTMLCanvasElement, ctx: CanvasRende
     if (e.code == 'Space') {
       playRandomMovement = !playRandomMovement;
     }
-    if (e.code == 'ShiftLeft' || e.code == 'ShiftRight' ||
-        e.code == 'ControlLeft' || e.code == 'ControlRight') {
+    if (e.code == 'ArrowUp') {
+      selectedPolygonId = (selectedPolygonId - 1 + polygons.length) % polygons.length;
+    }
+    if (e.code == 'ArrowDown') {
       selectedPolygonId = (selectedPolygonId + 1) % polygons.length;
+    }
+    if (e.code == 'KeyA') {
+      polygons.push(Polygon(ctx));
+      selectedPolygonId = polygons.length - 1;
+    }
+    if (e.code == 'KeyI') {
+      if (intersectionalPolygons.length == 0) return;
+
+      polygons = [];
+      for (let i=0; i<intersectionalPolygons.length; i++) {
+        const sourcePolygon = intersectionalPolygons[i];
+        polygons.push(Polygon(ctx));
+        for (let j=0; j<sourcePolygon.length; j++) {
+          polygons[i].addPoint({
+            x: sourcePolygon[j].x,
+            y: sourcePolygon[j].y
+          });
+        } 
+      }
+      intersectionalPolygons = [];
+      selectedPolygonId = 0;
     }
   })
 
-  const polygons = [Polygon(ctx), Polygon(ctx)];
+  let polygons = [Polygon(ctx), Polygon(ctx)];
   const xMid = canvasSize.width / 2;
   const yMid = canvasSize.height / 2;
-  const polygonScale = 150;
+  const polygonScale = 100;
   const root3 = Math.sqrt(3);
   polygons[0].addPoint({x: xMid, y: yMid - root3 * polygonScale});
   polygons[0].addPoint({x: xMid - polygonScale * 2, y: yMid + root3 * polygonScale});
@@ -52,7 +75,7 @@ export function drawDraggablePolygon(canvas: HTMLCanvasElement, ctx: CanvasRende
   polygons[1].addPoint({x: xMid - polygonScale * polygonBScale * 2, y: yMid + root3 * polygonScale * polygonBScale});
   polygons[1].addPoint({x: xMid + polygonScale * polygonBScale * 2, y: yMid + root3 * polygonScale * polygonBScale});
 
-  let intersectionalPolygons = getPolygonsIntersection(polygons[0].points, polygons[1].points);
+  let intersectionalPolygons: Point[][] = []; 
   let selectedPolygonId = 0;
 
   function drawFrame() {
@@ -94,7 +117,14 @@ export function drawDraggablePolygon(canvas: HTMLCanvasElement, ctx: CanvasRende
       polygon.draw(color, lineWidth, dotSize);
     }
 
-    intersectionalPolygons = getPolygonsIntersection(polygons[0].points, polygons[1].points);
+    intersectionalPolygons = []; 
+    for (let i=0; i<polygons.length; i++) {
+      const polygonA = polygons[i].points;
+      for (let j=i+1; j<polygons.length; j++) {
+        const polygonB = polygons[j].points;
+        intersectionalPolygons.push(...getPolygonsIntersection(polygonA, polygonB));
+      }
+    }
     for (let i=0; i<intersectionalPolygons.length; i++) {
       const points = intersectionalPolygons[i];
       const path2D = new Path2D();
@@ -140,6 +170,9 @@ export function drawDraggablePolygon(canvas: HTMLCanvasElement, ctx: CanvasRende
       for (let i = 0; i < polygons.length; i++) {
         const polygon = polygons[i].points;
         for (let j = 0; j < polygon.length; j++) {
+          if (polygonMovements[i] == undefined) {
+            polygonMovements.push([({ x: 0, y: 0 })]);  
+          }
           let polygonMovement = polygonMovements[i][j];
           if (polygonMovement == undefined) {
             polygonMovements[i].push(({ x: 0, y: 0 }));
@@ -151,7 +184,7 @@ export function drawDraggablePolygon(canvas: HTMLCanvasElement, ctx: CanvasRende
           point.x += polygonMovement.x;
           point.y += polygonMovement.y;
           point.x = Math.max(0, Math.min(canvas.width, point.x));
-          point.y = Math.max(0, Math.min(canvas.width, point.y));
+          point.y = Math.max(0, Math.min(canvas.height, point.y));
         }
       }
     }
