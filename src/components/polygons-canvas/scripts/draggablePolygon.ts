@@ -43,13 +43,14 @@ export function drawDraggablePolygon(canvas: HTMLCanvasElement, ctx: CanvasRende
   const yMid = canvasSize.height / 2;
   const polygonScale = 150;
   const root3 = Math.sqrt(3);
-  polygons[0].addPoint({x: xMid + 50, y: yMid - root3 * polygonScale - 30});
-  polygons[0].addPoint({x: xMid - polygonScale + 50, y: yMid + 50});
-  polygons[0].addPoint({x: xMid + polygonScale + 50, y: yMid - 50});
+  polygons[0].addPoint({x: xMid, y: yMid - root3 * polygonScale});
+  polygons[0].addPoint({x: xMid - polygonScale * 2, y: yMid + root3 * polygonScale});
+  polygons[0].addPoint({x: xMid + polygonScale * 2, y: yMid + root3 * polygonScale});
 
-  polygons[1].addPoint({x: xMid - polygonScale, y: yMid - root3 * polygonScale});
-  polygons[1].addPoint({x: xMid, y: yMid});
-  polygons[1].addPoint({x: xMid + polygonScale, y: yMid - root3 * polygonScale});
+  const polygonBScale = 0.75;
+  polygons[1].addPoint({x: xMid, y: yMid - root3 * polygonScale * polygonBScale});
+  polygons[1].addPoint({x: xMid - polygonScale * polygonBScale * 2, y: yMid + root3 * polygonScale * polygonBScale});
+  polygons[1].addPoint({x: xMid + polygonScale * polygonBScale * 2, y: yMid + root3 * polygonScale * polygonBScale});
 
   let intersectionalPolygons = getPolygonsIntersection(polygons[0].points, polygons[1].points);
   let selectedPolygonId = 0;
@@ -65,7 +66,6 @@ export function drawDraggablePolygon(canvas: HTMLCanvasElement, ctx: CanvasRende
 
     if (mouse.activePoint == null && mouse.isLeftClicked) {
       polygon.addPoint({x: mouse.x, y: mouse.y});
-      mouse.isLeftClicked = false;
     }
 
     if (mouse.activePoint !== null) {
@@ -113,10 +113,14 @@ export function drawDraggablePolygon(canvas: HTMLCanvasElement, ctx: CanvasRende
     if (mouse.activePoint !== null) {
       ctx.strokeStyle = "white";
       ctx.lineWidth = 2;
-      const pos = mouse.activePoint;
+      const p = mouse.activePoint;
       ctx.beginPath();
-      ctx.arc(pos.x,pos.y,8,0,Math.PI *2);
+      ctx.arc(p.x,p.y,8,0,Math.PI *2);
       ctx.stroke();
+
+      ctx.font = '13px Inter';
+      ctx.fillStyle = '#ffffffcc';
+      ctx.fillText(`(${p.x.toFixed(1)}, ${p.y.toFixed(1)})`, p.x, p.y - 10);
     }
   }
 
